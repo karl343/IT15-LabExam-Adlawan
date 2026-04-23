@@ -1,0 +1,121 @@
+@model crud_it15.Models.Employee
+
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-person-lines-fill me-2 text-primary"></i>Employee Details</h1>
+        <p class="page-subtitle">Viewing full profile and payroll history.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- Profile Card -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.5rem;margin:0 auto 1rem;">
+                    @Model.FirstName[0]@Model.LastName[0]
+                </div>
+                <h4 class="fw-bold mb-1">@Model.FullName</h4>
+                <p class="text-muted mb-1">@(Model.Position ?? "No Position")</p>
+                @if (!string.IsNullOrEmpty(Model.Department))
+                {
+                    <span class="badge bg-primary bg-opacity-10 text-primary">@Model.Department</span>
+                }
+
+                <hr />
+                <div class="text-start">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Employee ID</span>
+                        <span class="fw-semibold">#@Model.EmployeeId</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Daily Rate</span>
+                        <span class="fw-bold text-success">₱@Model.DailyRate.ToString("N2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Payroll Records</span>
+                        <span class="fw-semibold">@Model.Payrolls.Count</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.EmployeeId" class="btn btn-primary flex-fill btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.EmployeeId" class="btn btn-outline-danger flex-fill btn-sm">
+                        <i class="bi bi-trash me-1"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll History -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span class="fw-semibold">Payroll History</span>
+                <a asp-controller="Payrolls" asp-action="Create" asp-route-employeeId="@Model.EmployeeId"
+                   class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Add Payroll
+                </a>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Payrolls.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th class="text-end">Days Worked</th>
+                                    <th class="text-end">Gross Pay</th>
+                                    <th class="text-end">Deduction</th>
+                                    <th class="text-end">Net Pay</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.Payrolls.OrderByDescending(x => x.Date))
+                                {
+                                    <tr>
+                                        <td>@p.Date.ToString("MMM dd, yyyy")</td>
+                                        <td class="text-end">@p.DaysWorked</td>
+                                        <td class="text-end">₱@p.GrossPay.ToString("N2")</td>
+                                        <td class="text-end text-danger">-₱@p.Deduction.ToString("N2")</td>
+                                        <td class="text-end fw-bold text-success">₱@p.NetPay.ToString("N2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="2" class="fw-bold">Total</td>
+                                    <td class="text-end fw-bold">₱@Model.Payrolls.Sum(p => p.GrossPay).ToString("N2")</td>
+                                    <td class="text-end fw-bold text-danger">-₱@Model.Payrolls.Sum(p => p.Deduction).ToString("N2")</td>
+                                    <td class="text-end fw-bold text-success">₱@Model.Payrolls.Sum(p => p.NetPay).ToString("N2")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <i class="bi bi-cash-stack text-secondary"></i>
+                        <p>No payroll records found for this employee.</p>
+                        <a asp-controller="Payrolls" asp-action="Create" asp-route-employeeId="@Model.EmployeeId"
+                           class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus-lg me-1"></i> Add Payroll Record
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+@model IEnumerable<crud_it15.Models.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-people-fill me-2 text-primary"></i>Employees</h1>
+        <p class="page-subtitle">Manage your organization's employee records.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Add Employee
+    </a>
+</div>
+
+<!-- Search Bar -->
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="input-group" style="max-width: 420px;">
+        <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search text-secondary"></i>
+        </span>
+        <input type="text"
+               name="searchTerm"
+               value="@ViewData["SearchTerm"]"
+               class="form-control border-start-0 ps-0"
+               placeholder="Search by name, department, position…" />
+        <button class="btn btn-primary" type="submit">Search</button>
+        @if (!string.IsNullOrEmpty(ViewData["SearchTerm"]?.ToString()))
+        {
+            <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        }
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="fw-semibold text-secondary" style="font-size:0.9rem;">
+            <i class="bi bi-table me-1"></i> Employee List
+            @if (!string.IsNullOrEmpty(ViewData["SearchTerm"]?.ToString()))
+            {
+                <span class="badge bg-primary ms-2">Filtered</span>
+            }
+        </span>
+        <span class="badge bg-light text-dark border">@Model.Count() records</span>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee Name</th>
+                            <th>Position</th>
+                            <th>Department</th>
+                            <th class="text-end">Daily Rate</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int rowNum = 1;}
+                        @foreach (var emp in Model)
+                        {
+                            <tr>
+                                <td class="text-muted" style="font-size:0.82rem;">@rowNum++</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.8rem;flex-shrink:0;">
+                                            @emp.FirstName[0]@emp.LastName[0]
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold" style="color:#1e293b;">@emp.FullName</div>
+                                            <div style="font-size:0.77rem;color:#94a3b8;">ID: @emp.EmployeeId</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@(emp.Position ?? "—")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(emp.Department))
+                                    {
+                                        <span class="badge bg-light text-dark border">@emp.Department</span>
+                                    }
+                                    else { <span class="text-muted">—</span> }
+                                </td>
+                                <td class="text-end fw-semibold" style="color:#16a34a;">
+                                    ₱@emp.DailyRate.ToString("N2")
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a asp-action="Details" asp-route-id="@emp.EmployeeId"
+                                           class="btn btn-sm btn-outline-secondary" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@emp.EmployeeId"
+                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@emp.EmployeeId"
+                                           class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-people text-secondary"></i>
+                <p class="fw-semibold">No employees found.</p>
+                <a asp-action="Create" class="btn btn-primary btn-sm mt-1">
+                    <i class="bi bi-plus-lg me-1"></i> Add First Employee
+                </a>
+            </div>
+        }
+    </div>
+</div>

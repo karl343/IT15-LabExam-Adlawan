@@ -1,0 +1,59 @@
+@model crud_it15.Models.Employee
+
+@{
+    ViewData["Title"] = "Delete Employee";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-trash-fill me-2 text-danger"></i>Delete Employee</h1>
+        <p class="page-subtitle">This action cannot be undone.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger border-opacity-50">
+            <div class="card-body p-4">
+                <div class="alert alert-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>
+                        <strong>Warning:</strong> Deleting this employee will also permanently remove all associated payroll records.
+                    </div>
+                </div>
+
+                <div class="text-center mb-4">
+                    <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ef4444,#b91c1c);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.3rem;margin:0 auto 0.75rem;">
+                        @Model.FirstName[0]@Model.LastName[0]
+                    </div>
+                    <h5 class="fw-bold mb-1">@Model.FullName</h5>
+                    <p class="text-muted mb-0">@(Model.Position ?? "—") &bull; @(Model.Department ?? "—")</p>
+                </div>
+
+                <table class="table table-bordered table-sm">
+                    <tr>
+                        <td class="text-muted" width="40%">Employee ID</td>
+                        <td class="fw-semibold">#@Model.EmployeeId</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Daily Rate</td>
+                        <td class="fw-semibold text-success">₱@Model.DailyRate.ToString("N2")</td>
+                    </tr>
+                </table>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="EmployeeId" />
+                    <div class="d-flex gap-2 justify-content-end mt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i> Confirm Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
