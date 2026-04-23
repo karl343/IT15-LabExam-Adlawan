@@ -1,0 +1,144 @@
+@model IEnumerable<crud_it15.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Payroll Records";
+    decimal totalGross = (decimal)(ViewBag.TotalGross ?? 0m);
+    decimal totalDeduction = (decimal)(ViewBag.TotalDeduction ?? 0m);
+    decimal totalNet = (decimal)(ViewBag.TotalNet ?? 0m);
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-cash-stack me-2 text-primary"></i>Payroll Records</h1>
+        <p class="page-subtitle">View and manage payroll transactions for all employees.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Add Payroll
+    </a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="summary-card">
+            <div class="summary-icon" style="background:#dbeafe;">
+                <i class="bi bi-graph-up text-primary"></i>
+            </div>
+            <div>
+                <div class="summary-value">₱@totalGross.ToString("N2")</div>
+                <div class="summary-label">Total Gross Pay</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card">
+            <div class="summary-icon" style="background:#fee2e2;">
+                <i class="bi bi-dash-circle text-danger"></i>
+            </div>
+            <div>
+                <div class="summary-value text-danger">₱@totalDeduction.ToString("N2")</div>
+                <div class="summary-label">Total Deductions</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card">
+            <div class="summary-icon" style="background:#dcfce7;">
+                <i class="bi bi-wallet2 text-success"></i>
+            </div>
+            <div>
+                <div class="summary-value text-success">₱@totalNet.ToString("N2")</div>
+                <div class="summary-label">Total Net Pay</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Filter -->
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="d-flex gap-2 align-items-center" style="max-width: 500px;">
+        <label class="form-label mb-0 fw-semibold text-nowrap" style="font-size:0.875rem;">Filter by Employee:</label>
+        <select name="employeeId" asp-items="ViewBag.EmployeeList" class="form-select" id="employeeFilter">
+            <option value="">— All Employees —</option>
+        </select>
+        <button type="submit" class="btn btn-primary text-nowrap">Apply</button>
+        @if (ViewBag.SelectedEmployeeId != null)
+        {
+            <a asp-action="Index" class="btn btn-outline-secondary text-nowrap">Clear</a>
+        }
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <span class="fw-semibold text-secondary" style="font-size:0.9rem;">
+            <i class="bi bi-table me-1"></i> Payroll List
+        </span>
+        <span class="badge bg-light text-dark border">@Model.Count() records</span>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee</th>
+                            <th>Date</th>
+                            <th class="text-end">Days Worked</th>
+                            <th class="text-end">Gross Pay</th>
+                            <th class="text-end">Deduction</th>
+                            <th class="text-end">Net Pay</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int rowNum = 1;}
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td class="text-muted" style="font-size:0.82rem;">@rowNum++</td>
+                                <td>
+                                    <div class="fw-semibold">@p.Employee?.FullName</div>
+                                    <div style="font-size:0.77rem;color:#94a3b8;">@p.Employee?.Department</div>
+                                </td>
+                                <td>@p.Date.ToString("MMM dd, yyyy")</td>
+                                <td class="text-end">@p.DaysWorked</td>
+                                <td class="text-end">₱@p.GrossPay.ToString("N2")</td>
+                                <td class="text-end text-danger">₱@p.Deduction.ToString("N2")</td>
+                                <td class="text-end fw-bold text-success">₱@p.NetPay.ToString("N2")</td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-1 justify-content-center">
+                                        <a asp-action="Details" asp-route-id="@p.PayrollId"
+                                           class="btn btn-sm btn-outline-secondary" title="Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@p.PayrollId"
+                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@p.PayrollId"
+                                           class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-cash-stack text-secondary"></i>
+                <p class="fw-semibold">No payroll records found.</p>
+                <a asp-action="Create" class="btn btn-primary btn-sm mt-1">
+                    <i class="bi bi-plus-lg me-1"></i> Add Payroll Record
+                </a>
+            </div>
+        }
+    </div>
+</div>

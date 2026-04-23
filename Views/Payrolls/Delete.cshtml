@@ -1,0 +1,69 @@
+@model crud_it15.Models.Payroll
+
+@{
+    ViewData["Title"] = "Delete Payroll Record";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-trash-fill me-2 text-danger"></i>Delete Payroll Record</h1>
+        <p class="page-subtitle">This action is permanent and cannot be undone.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to List
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger border-opacity-50">
+            <div class="card-body p-4">
+                <div class="alert alert-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>Are you sure you want to delete this payroll record?</div>
+                </div>
+
+                <table class="table table-bordered table-sm mt-3">
+                    <tr>
+                        <td class="text-muted" width="40%">Payroll ID</td>
+                        <td class="fw-semibold">#@Model.PayrollId</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Employee</td>
+                        <td class="fw-semibold">@Model.Employee?.FullName</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Date</td>
+                        <td class="fw-semibold">@Model.Date.ToString("MMM dd, yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Days Worked</td>
+                        <td class="fw-semibold">@Model.DaysWorked</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Gross Pay</td>
+                        <td class="fw-semibold">₱@Model.GrossPay.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Deduction</td>
+                        <td class="fw-semibold text-danger">₱@Model.Deduction.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Net Pay</td>
+                        <td class="fw-bold text-success">₱@Model.NetPay.ToString("N2")</td>
+                    </tr>
+                </table>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="PayrollId" />
+                    <div class="d-flex gap-2 justify-content-end mt-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-1"></i> Confirm Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
